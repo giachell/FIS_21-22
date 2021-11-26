@@ -1,0 +1,39 @@
+body{
+    padding: 30px;
+}
+
+
+.home-button{
+    color: #212529;
+    font-size: 1em !important;
+}
+
+.home-button:hover{
+    color: royalblue !important;
+}
+
+.delete-button{
+    font-size: 2em !important;
+    color: orangered !important;
+}
+
+.edit-button{
+    font-size: 2em !important;
+    color: royalblue !important;
+}
+
+.size-1_5_em{
+    font-size: 1.5em !important;
+}
+
+.size-1_7_em{
+    font-size: 1.7em !important;
+}
+
+.size-2_em{
+    font-size: 2em !important;
+}
+
+.red-orange{
+    color: orangered !important;
+}

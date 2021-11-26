@@ -1,0 +1,106 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- My CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <!-- Lineicons CSS -->
+    <link href="https://cdn.lineicons.com/3.0/lineicons.css" rel="stylesheet">
+
+    <!-- MaterialIcons CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+    <!-- Bootstrap files  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+     <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- jQuery DataTables -->
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <script type="application/javascript" src="http://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+    <script type="application/javascript">
+        $(document).ready( function () {
+            $('#netflix-movies').DataTable();
+
+            // handle click on delete movie button
+            $('body').delegate('.delete-button' ,'click', function (){
+                let movie_id = $(this).attr('movie-id');
+                let movie_title = $(this).attr('movie-title');
+                let response = confirm(`Do you really want to delete the movie '${movie_title}'?`);
+
+                if(response)
+                {
+                    $('#delete-form-'+movie_id).submit();
+                    // Do something
+                }
+
+                // Otherwise do nothing
+            })
+
+        // handle click on edit movie button
+        $('body').delegate('.edit-button' ,'click', function (){
+                let movie_id = $(this).attr('movie-id');
+                $('#edit-form-'+movie_id).submit();
+            });
+
+        } );
+    </script>
+
+    <title>Netflix movies</title>
+</head>
+<body>
+
+<div class="container-fluid">
+   <h1><a href="tabular"><span class="material-icons home-button">home
+        </span></a>&nbsp;Netflix movies</h1>
+ {% if message %}
+            {% if message_type == "error" %}
+                {% autoescape off %}
+                    <p class="alert alert-warning">{{ message }}</p>
+                {% endautoescape %}
+            {% else %}
+                 {% autoescape off %}
+                    <p class="alert alert-success">{{ message }}</p>
+                {% endautoescape %}
+            {% endif %}
+         {% endif %}
+
+    {% if movies %}
+        <table id="netflix-movies">
+        <thead>
+            <tr><th>Title</th><th>Type</th><th>Description</th>
+                <th>Director</th><th>Country</th><th>Cast</th>
+                <th>Date added</th><th>Release year</th><th>Rating</th>
+                <th>Duration</th><th>Listed in</th><th>Delete</th><th>Edit</th></tr>
+        </thead>
+        <tbody>
+            {% for m in movies %}
+                <tr><td>{{ m.title }}</td><td>{{ m.type }}</td><td>{{ m.description }}</td>
+                    <td>{{ m.director }}</td><td>{{ m.country }}</td><td>{{ m.cast }}</td>
+                    <td>{{ m.date_added }}</td><td>{{ m.release_year }}</td><td>{{ m.rating }}</td>
+                    <td>{{ m.duration }}</td><td>{{ m.listed_in }}</td>
+                    <td><i movie-id="{{ m.id }}" movie-title="{{ m.title }}" class="lni lni-trash-can delete-button"></i>
+                        <form action="delete" method="post" id="delete-form-{{ m.id }}">{% csrf_token %}<input type="hidden" name="movie-id" value="{{ m.id }}"> </form></td>
+                    <td><i movie-id="{{ m.id }}" movie-title="{{ m.title }}" class="lni lni-pencil-alt edit-button"></i>
+                        <form action="edit" method="post" id="edit-form-{{ m.id }}">{% csrf_token %}<input type="hidden" name="movie-id" value="{{ m.id }}"><input type="hidden" name="action" value="edit"> </form></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    {% else %}
+        <p>No movies available.</p>
+    {% endif %}
+</div>
+</body>
+</html>
